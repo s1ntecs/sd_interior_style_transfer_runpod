@@ -203,7 +203,7 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         structure_depth_strength = payload.get(
             "structure_depth_strength", 1.0)
         cfg_scale = payload.get(
-            "structure_depth_strength", 8)
+            "structure_depth_strength", 8.0)
         structure_denoising_strength = payload.get(
             "structure_denoising_strength", 0.65)
         seed = int(payload.get(
