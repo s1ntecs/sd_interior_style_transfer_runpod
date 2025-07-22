@@ -137,6 +137,8 @@ class Predictor():
         structure_depth_strength: float,
         structure_denoising_strength: float,
         seed: int,
+        steps: int,
+        cfg: float,
     ) -> Dict[str, Any]:
         """Run a single prediction on the model"""
         self.cleanup()
@@ -162,6 +164,8 @@ class Predictor():
             batch_size=number_of_images,
             structure_depth_strength=structure_depth_strength,
             structure_denoising_strength=structure_denoising_strength,
+            steps=steps,
+            cfg=cfg
         )
 
         wf = self.comfyUI.load_workflow(workflow, handle_weights=True)
@@ -198,11 +202,15 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
             "number_of_images", 1)
         structure_depth_strength = payload.get(
             "structure_depth_strength", 1.0)
+        cfg_scale = payload.get(
+            "structure_depth_strength", 8)
         structure_denoising_strength = payload.get(
             "structure_denoising_strength", 0.65)
         seed = int(payload.get(
             "seed",
             random.randint(0, MAX_SEED)))
+        steps = int(payload.get(
+            "steps", 30))
         result = comfy_obj.predict(
             job=job,
             style_image_url=style_image_url,
@@ -212,7 +220,9 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
             number_of_images=number_of_images,
             structure_denoising_strength=structure_denoising_strength,
             structure_depth_strength=structure_depth_strength,
-            seed=seed
+            seed=seed,
+            steps=steps,
+            cfg=cfg_scale
         )
         return result
     except (torch.cuda.OutOfMemoryError, RuntimeError) as exc:
