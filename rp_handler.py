@@ -40,7 +40,7 @@ class Predictor():
         self.comfyUI = ComfyUI("127.0.0.1:8188")
         self.comfyUI.start_server(OUTPUT_DIR, INPUT_DIR)
         self.comfyUI.load_workflow(
-            STYLE_TRANSFER_WORKFLOW_JSON,
+            STYLE_TRANSFER_WITH_STRUCTURE_WORKFLOW_JSON,
             handle_inputs=False,
             handle_weights=True
         )
