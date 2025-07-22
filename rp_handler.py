@@ -22,6 +22,8 @@ INPUT_DIR = "/tmp/inputs"
 COMFYUI_TEMP_OUTPUT_DIR = "ComfyUI/temp"
 MAX_SEED = np.iinfo(np.int32).max
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 mimetypes.add_type("image/webp", ".webp")
 
 with open("style-transfer-api.json", "r") as file:
@@ -177,11 +179,15 @@ class Predictor():
 for d in (INPUT_DIR, OUTPUT_DIR, COMFYUI_TEMP_OUTPUT_DIR):
     os.makedirs(d, exist_ok=True)
 
-comfy_obj = Predictor()
-comfy_obj.setup()
+if torch.cuda.is_available():
+    print("Current CUDA device:", torch.cuda.current_device())
+    print("Device name:", torch.cuda.get_device_name(torch.cuda.current_device()))
+    comfy_obj = Predictor()
+    comfy_obj.setup()
 
 
 def handler(job: Dict[str, Any]) -> Dict[str, Any]:
+    global comfy_obj
     try:
         payload = job.get("input", {})
         style_image_url = payload.get("style_image_url")

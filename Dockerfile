@@ -6,6 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     SHELL=/bin/bash
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+WORKDIR /workspace
+
 # 1) Системные зависимости
 RUN apt update && \
     apt install -y --no-install-recommends \
@@ -16,10 +18,11 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 RUN git lfs install
 
-WORKDIR /workspace
+
 
 # 2) Копируем файл зависимостей
-COPY requirements.txt .
+# 4) Копируем остальной код
+COPY . .
 
 # 3) Устанавливаем PyTorch, torchvision, torchaudio и xFormers
 RUN pip3 install --upgrade pip && \
@@ -37,13 +40,11 @@ RUN pip install onnxruntime-gpu \
       --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
 
 
-# 4) Копируем остальной код
-COPY . .
-
 # 5) Создаём каталоги и загружаем чекпоинты
 RUN mkdir -p loras checkpoints && \
     python3 download_checkpoints.py
 
 # 6) Точка входа
 COPY --chmod=755 start_standalone.sh /start.sh
-ENTRYPOINT ["/start.sh"]
+
+ENTRYPOINT /start.sh
