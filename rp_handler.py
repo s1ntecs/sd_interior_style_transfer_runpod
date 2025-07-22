@@ -142,11 +142,6 @@ class Predictor():
     ) -> Dict[str, Any]:
         """Run a single prediction on the model"""
         self.cleanup()
-
-        if seed is None:
-            seed = random.randint(0, 2**32 - 1)
-            print(f"Random seed set to: {seed}")
-
         rp_file(style_image_url,
                 "image.png",
                 INPUT_DIR)
