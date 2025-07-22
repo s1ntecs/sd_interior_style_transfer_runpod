@@ -234,6 +234,7 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
         import traceback
         return {"error": str(exc), "trace": traceback.format_exc(limit=5)}
 
+
 # ------------------------- RUN WORKER ------------------------------------ #
 if __name__ == "__main__":
     runpod.serverless.start({"handler": handler})

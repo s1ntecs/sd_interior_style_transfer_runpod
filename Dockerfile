@@ -1,4 +1,5 @@
-FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+# FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+FROM runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
@@ -11,7 +12,7 @@ WORKDIR /workspace
 # 1) Системные зависимости
 RUN apt update && \
     apt install -y --no-install-recommends \
-      python3-dev python3-pip python3.10-venv \
+      # python3-dev python3-pip python3.10-venv \
       fonts-dejavu-core git git-lfs jq wget curl \
       libglib2.0-0 libsm6 libgl1 libxrender1 libxext6 \
       ffmpeg procps && \
@@ -21,7 +22,6 @@ RUN git lfs install
 
 
 # 2) Копируем файл зависимостей
-# 4) Копируем остальной код
 COPY . .
 
 # 3) Устанавливаем PyTorch, torchvision, torchaudio и xFormers
@@ -41,8 +41,7 @@ RUN pip install onnxruntime-gpu \
 
 
 # 5) Создаём каталоги и загружаем чекпоинты
-RUN mkdir -p loras checkpoints && \
-    python3 download_checkpoints.py
+RUN python3 download_checkpoints.py
 
 # 6) Точка входа
 COPY --chmod=755 start_standalone.sh /start.sh
