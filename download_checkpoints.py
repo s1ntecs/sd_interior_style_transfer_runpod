@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from huggingface_hub import hf_hub_download
 from helpers.comfyui import ComfyUI
 
+with open("style-transfer-with-structure-api.json", "r") as file:
+    STYLE_TRANSFER_WITH_STRUCTURE_WORKFLOW_JSON = file.read()
+
 
 @dataclass
 class HFFile:
@@ -69,6 +72,11 @@ def download_comfy():
     # Заметка: у тебя было `comfyUI.download_pre_start_models` без вызова.
     if hasattr(comfy, "download_pre_start_models"):
         comfy.download_pre_start_models()
+        comfy.load_workflow(
+            STYLE_TRANSFER_WITH_STRUCTURE_WORKFLOW_JSON,
+            handle_inputs=False,
+            handle_weights=True
+        )
     else:
         # либо просто заглушка
         pass

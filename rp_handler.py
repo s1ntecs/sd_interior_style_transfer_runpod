@@ -26,9 +26,6 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 mimetypes.add_type("image/webp", ".webp")
 
-with open("style-transfer-api.json", "r") as file:
-    STYLE_TRANSFER_WORKFLOW_JSON = file.read()
-
 with open("style-transfer-with-structure-api.json", "r") as file:
     STYLE_TRANSFER_WITH_STRUCTURE_WORKFLOW_JSON = file.read()
 
@@ -57,10 +54,6 @@ class Predictor():
             if os.path.exists(directory):
                 shutil.rmtree(directory)
             os.makedirs(directory)
-
-    def handle_input_file(self, input_file: str, filename: str = "image.png"):
-        image = Image.open(input_file)
-        image.save(os.path.join(INPUT_DIR, filename))
 
     def log_and_collect_files(self, directory, prefix=""):
         files = []
@@ -203,8 +196,7 @@ def handler(job: Dict[str, Any]) -> Dict[str, Any]:
             "number_of_images", 1)
         structure_depth_strength = payload.get(
             "structure_depth_strength", 1.0)
-        cfg_scale = payload.get(
-            "structure_depth_strength", 8.0)
+        cfg_scale = float(payload.get("cfg_scale", 8.0))
         structure_denoising_strength = payload.get(
             "structure_denoising_strength", 0.65)
         seed = int(payload.get(
